@@ -100,7 +100,7 @@ func LevelString() string {
 }
 
 func SetReleaseLogger() {
-	logger = New("goguelike", LL_All, true)
+	logger = New("", LL_All, true)
 }
 func Printf(format string, v ...interface{}) {
 	logger.printf(LL_Info, format, v...)
