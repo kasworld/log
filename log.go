@@ -93,7 +93,7 @@ func (l Log) Fatal(format string, v ...interface{}) {
 
 // ===
 
-var logger = New("goguelike", LL_All, false)
+var logger = New("", LL_All, false)
 
 func LevelString() string {
 	return logger.String()
