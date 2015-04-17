@@ -30,7 +30,7 @@ type Log struct {
 	l        map[int]*log.Logger
 }
 
-func New(prefix string, loglevel int, release bool) Log {
+func New(prefix string, loglevel int, release bool) *Log {
 	l := Log{
 		loglevel: loglevel,
 		l:        make(map[int]*log.Logger),
@@ -42,7 +42,7 @@ func New(prefix string, loglevel int, release bool) Log {
 	for i, v := range LogLevel2str {
 		l.l[i] = log.New(os.Stderr, fmt.Sprintf("%v %v:", prefix, v), flags)
 	}
-	return l
+	return &l
 }
 
 func (l Log) String() string {
@@ -93,7 +93,7 @@ func (l Log) Fatal(format string, v ...interface{}) {
 
 // ===
 
-var logger = New("", LL_All, false)
+var logger = New("Global", LL_All, false)
 
 func LevelString() string {
 	return logger.String()
