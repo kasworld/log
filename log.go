@@ -56,6 +56,12 @@ func New(prefix string, loglevel int, release bool) *Log {
 	return &l
 }
 
+func (l *Log) SetPrefix(p string) {
+	for i, _ := range LogLevel2str {
+		l.l[i].SetPrefix(p)
+	}
+}
+
 func (l Log) String() string {
 	levelstr := ""
 	for i, v := range LogLevel2str {
