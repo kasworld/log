@@ -30,61 +30,59 @@ func LevelString() string {
 }
 
 func Printf(format string, v ...interface{}) {
-	logger.printf(LL_Info, format, v...)
+	s := logger.LogPrintf(2, LL_Info, format, v...)
+	logger.Output(s)
 }
 func Info(format string, v ...interface{}) {
-	logger.printf(LL_Info, format, v...)
+	s := logger.LogPrintf(2, LL_Info, format, v...)
+	logger.Output(s)
 }
 func Warn(format string, v ...interface{}) {
-	logger.printf(LL_Warn, format, v...)
+	s := logger.LogPrintf(2, LL_Warn, format, v...)
+	logger.Output(s)
 }
 func Debug(format string, v ...interface{}) {
-	logger.printf(LL_Debug, format, v...)
+	s := logger.LogPrintf(2, LL_Debug, format, v...)
+	logger.Output(s)
 }
 func Error(format string, v ...interface{}) {
-	logger.printf(LL_Error, format, v...)
+	s := logger.LogPrintf(2, LL_Error, format, v...)
+	logger.Output(s)
 }
 func Fatal(format string, v ...interface{}) {
-	logger.printf(LL_Fatal, format, v...)
+	s := logger.LogPrintf(2, LL_Fatal, format, v...)
+	logger.Output(s)
 	os.Exit(1)
 }
 
-func AddLevel(level int) {
-	logger.loglevel |= level
+func AddLevel(level LL_Type) {
+	logger.AddLevel(level)
 }
-func SetLevel(level int) {
-	logger.loglevel = level
+func SetLevel(level LL_Type) {
+	logger.SetLevel(level)
 }
-func DelLevel(level int) {
-	logger.loglevel &= ^level
+func DelLevel(level LL_Type) {
+	logger.DelLevel(level)
 }
-func IsLevel(level int) bool {
-	return logger.loglevel&level != 0
+func IsLevel(level LL_Type) bool {
+	return logger.IsLevel(level)
 }
 
 func SetPrefix(p string) {
-	logger.mu.Lock()
-	defer logger.mu.Unlock()
-	logger.prefix = p
+	logger.SetPrefix(p)
 }
 
 // Prefix returns the output prefix for the logger.
 func GetPrefix() string {
-	logger.mu.Lock()
-	defer logger.mu.Unlock()
-	return logger.prefix
+	return logger.GetPrefix()
 }
 
 // Flags returns the output flags for the logger.
-func GetFlags() int {
-	logger.mu.Lock()
-	defer logger.mu.Unlock()
-	return logger.flag
+func GetFlags() LF_Type {
+	return logger.GetFlags()
 }
 
 // SetFlags sets the output flags for the logger.
-func SetFlags(flag int) {
-	logger.mu.Lock()
-	defer logger.mu.Unlock()
-	logger.flag = flag
+func SetFlags(flag LF_Type) {
+	logger.SetFlags(flag)
 }
