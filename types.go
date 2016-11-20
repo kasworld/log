@@ -33,7 +33,8 @@ const (
 	Lshortfile                        // final file name element and line number: d.go:23. overrides Llongfile
 	Lfunctionname
 	Lprefix
-	LUTC                      // if Ldate or Ltime is set, use UTC rather than the local time zone
+	LUTC // if Ldate or Ltime is set, use UTC rather than the local time zone
+	LF_END
 	LstdFlags = Ldate | Ltime // initial values for the standard logger
 )
 

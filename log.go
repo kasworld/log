@@ -24,11 +24,10 @@ import (
 type Log struct {
 	mutex    sync.Mutex // ensures atomic writes; protects the following fields
 	flag     LF_Type    // properties
-	prefix   string     // prefix to write at beginning of each line
 	loglevel LL_Type
-	out      io.WriteCloser
+	prefix   string // prefix to write at beginning of each line
 	filename string
-	buf      []byte // for accumulating text to write
+	out      io.WriteCloser
 }
 
 func New(w io.WriteCloser, prefix string, loglevel LL_Type, release bool) *Log {

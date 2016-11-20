@@ -19,9 +19,23 @@ import (
 )
 
 func (l Log) String() string {
+	return fmt.Sprintf("Log[%v, %v]", l.FlagString(), l.LevelString())
+}
+
+func (l Log) LevelString() string {
 	var buff bytes.Buffer
-	buff.WriteString("Log[")
+	buff.WriteString("LogLevel[")
 	for i := LL_Type(1); i < LL_END; i <<= 1 {
+		fmt.Fprintf(&buff, "%s ", i)
+	}
+	buff.WriteString("]")
+	return buff.String()
+}
+
+func (l Log) FlagString() string {
+	var buff bytes.Buffer
+	buff.WriteString("LogFlag[")
+	for i := LF_Type(1); i < LF_END; i <<= 1 {
 		fmt.Fprintf(&buff, "%s ", i)
 	}
 	buff.WriteString("]")
