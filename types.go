@@ -12,6 +12,11 @@
 // can use instead of standard log package
 package log
 
+import (
+	"bytes"
+	"fmt"
+)
+
 //go:generate stringer -type=LF_Type
 type LF_Type int
 
@@ -26,16 +31,16 @@ const (
 	//	2009/01/23 01:23:23 message
 	// while flags Ldate | Ltime | Lmicroseconds | Llongfile produce,
 	//	2009/01/23 01:23:23.123123 /a/b/c/d.go:23: message
-	Ldate         LF_Type = 1 << iota // the date in the local time zone: 2009/01/23
-	Ltime                             // the time in the local time zone: 01:23:23
-	Lmicroseconds                     // microsecond resolution: 01:23:23.123123.  assumes Ltime.
-	Llongfile                         // full file name and line number: /a/b/c/d.go:23
-	Lshortfile                        // final file name element and line number: d.go:23. overrides Llongfile
-	Lfunctionname
-	Lprefix
-	LUTC // if Ldate or Ltime is set, use UTC rather than the local time zone
+	LF_date         LF_Type = 1 << iota // the date in the local time zone: 2009/01/23
+	LF_time                             // the time in the local time zone: 01:23:23
+	LF_microseconds                     // microsecond resolution: 01:23:23.123123.  assumes Ltime.
+	LF_longfile                         // full file name and line number: /a/b/c/d.go:23
+	LF_shortfile                        // final file name element and line number: d.go:23. overrides Llongfile
+	LF_functionname
+	LF_prefix
+	LF_UTC // if Ldate or Ltime is set, use UTC rather than the local time zone
 	LF_END
-	LstdFlags = Ldate | Ltime // initial values for the standard logger
+	LF_stdFlags = LF_date | LF_time // initial values for the standard logger
 )
 
 //go:generate stringer -type=LL_Type
@@ -50,3 +55,13 @@ const (
 	LL_END
 	LL_All = LL_Debug | LL_Info | LL_Warn | LL_Error | LL_Fatal
 )
+
+func AllLevelString() string {
+	var buff bytes.Buffer
+	buff.WriteString("LogLevel[")
+	for i := LL_Type(1); i < LL_END; i <<= 1 {
+		fmt.Fprintf(&buff, "%s ", i)
+	}
+	buff.WriteString("]")
+	return buff.String()
+}

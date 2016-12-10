@@ -5,23 +5,25 @@ package log
 import "fmt"
 
 const (
-	_LF_Type_name_0 = "LdateLtime"
-	_LF_Type_name_1 = "Lmicroseconds"
-	_LF_Type_name_2 = "Llongfile"
-	_LF_Type_name_3 = "Lshortfile"
-	_LF_Type_name_4 = "Lfunctionname"
-	_LF_Type_name_5 = "Lprefix"
-	_LF_Type_name_6 = "LUTC"
+	_LF_Type_name_0 = "LF_dateLF_time"
+	_LF_Type_name_1 = "LF_microseconds"
+	_LF_Type_name_2 = "LF_longfile"
+	_LF_Type_name_3 = "LF_shortfile"
+	_LF_Type_name_4 = "LF_functionname"
+	_LF_Type_name_5 = "LF_prefix"
+	_LF_Type_name_6 = "LF_UTC"
+	_LF_Type_name_7 = "LF_END"
 )
 
 var (
-	_LF_Type_index_0 = [...]uint8{0, 5, 10}
-	_LF_Type_index_1 = [...]uint8{0, 13}
-	_LF_Type_index_2 = [...]uint8{0, 9}
-	_LF_Type_index_3 = [...]uint8{0, 10}
-	_LF_Type_index_4 = [...]uint8{0, 13}
-	_LF_Type_index_5 = [...]uint8{0, 7}
-	_LF_Type_index_6 = [...]uint8{0, 4}
+	_LF_Type_index_0 = [...]uint8{0, 7, 14}
+	_LF_Type_index_1 = [...]uint8{0, 15}
+	_LF_Type_index_2 = [...]uint8{0, 11}
+	_LF_Type_index_3 = [...]uint8{0, 12}
+	_LF_Type_index_4 = [...]uint8{0, 15}
+	_LF_Type_index_5 = [...]uint8{0, 9}
+	_LF_Type_index_6 = [...]uint8{0, 6}
+	_LF_Type_index_7 = [...]uint8{0, 6}
 )
 
 func (i LF_Type) String() string {
@@ -41,6 +43,8 @@ func (i LF_Type) String() string {
 		return _LF_Type_name_5
 	case i == 128:
 		return _LF_Type_name_6
+	case i == 256:
+		return _LF_Type_name_7
 	default:
 		return fmt.Sprintf("LF_Type(%d)", i)
 	}

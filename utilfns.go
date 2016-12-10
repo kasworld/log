@@ -12,6 +12,11 @@
 // can use instead of standard log package
 package log
 
+import (
+	"runtime"
+	"time"
+)
+
 //// Cheap integer to fixed-width decimal ASCII.  Give a negative width to avoid zero-padding.
 func itoa(buf *[]byte, i int, wid int) {
 	// Assemble decimal in reverse order.
@@ -27,4 +32,80 @@ func itoa(buf *[]byte, i int, wid int) {
 	// i < 10
 	b[bp] = byte('0' + i)
 	*buf = append(*buf, b[bp:]...)
+}
+
+func FormatHeader(buf *[]byte, logflag LF_Type, prefix string, calldepth int, llinfo string) {
+
+	now := time.Now() // get this early.
+	var file string
+	var fnname string
+	var line int
+	var pc uintptr
+	if logflag&(LF_shortfile|LF_longfile|LF_functionname) != 0 {
+		// release lock while getting caller info - it's expensive.
+		var ok bool
+		pc, file, line, ok = runtime.Caller(calldepth)
+		if !ok {
+			file = "???"
+			line = 0
+			fnname = "???"
+		} else if logflag&LF_functionname != 0 {
+			fn := runtime.FuncForPC(pc)
+			fnname = fn.Name()
+		}
+	}
+
+	if logflag&LF_prefix != 0 {
+		*buf = append(*buf, prefix...)
+		*buf = append(*buf, ' ')
+	}
+	*buf = append(*buf, llinfo...)
+	*buf = append(*buf, ' ')
+	if logflag&LF_UTC != 0 {
+		now = now.UTC()
+	}
+	if logflag&(LF_date|LF_time|LF_microseconds) != 0 {
+		if logflag&LF_date != 0 {
+			year, month, day := now.Date()
+			itoa(buf, year, 4)
+			*buf = append(*buf, '/')
+			itoa(buf, int(month), 2)
+			*buf = append(*buf, '/')
+			itoa(buf, day, 2)
+			*buf = append(*buf, ' ')
+		}
+		if logflag&(LF_time|LF_microseconds) != 0 {
+			hour, min, sec := now.Clock()
+			itoa(buf, hour, 2)
+			*buf = append(*buf, ':')
+			itoa(buf, min, 2)
+			*buf = append(*buf, ':')
+			itoa(buf, sec, 2)
+			if logflag&LF_microseconds != 0 {
+				*buf = append(*buf, '.')
+				itoa(buf, now.Nanosecond()/1e3, 6)
+			}
+			*buf = append(*buf, ' ')
+		}
+	}
+	if logflag&(LF_shortfile|LF_longfile) != 0 {
+		if logflag&LF_shortfile != 0 {
+			short := file
+			for i := len(file) - 1; i > 0; i-- {
+				if file[i] == '/' {
+					short = file[i+1:]
+					break
+				}
+			}
+			file = short
+		}
+		*buf = append(*buf, file...)
+		*buf = append(*buf, ':')
+		itoa(buf, line, -1)
+		if logflag&(LF_functionname) != 0 {
+			*buf = append(*buf, ':')
+			*buf = append(*buf, fnname...)
+		}
+		*buf = append(*buf, ": "...)
+	}
 }
