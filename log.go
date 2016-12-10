@@ -70,13 +70,6 @@ func (l *Log) Reload() error {
 	return nil
 }
 
-func (l *Log) Output(s []byte) error {
-	l.mutex.Lock()
-	defer l.mutex.Unlock()
-	_, err := l.out.Write(s)
-	return err
-}
-
 func (l Log) LogPrintf(calldepth int, ll LL_Type, format string, v ...interface{}) []byte {
 	if !l.IsLevel(ll) {
 		return nil
@@ -91,4 +84,11 @@ func (l Log) LogPrintf(calldepth int, ll LL_Type, format string, v ...interface{
 		buf = append(buf, '\n')
 	}
 	return buf
+}
+
+func (l *Log) Output(s []byte) error {
+	l.mutex.Lock()
+	defer l.mutex.Unlock()
+	_, err := l.out.Write(s)
+	return err
 }

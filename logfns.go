@@ -13,37 +13,14 @@
 package log
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 )
 
 func (l Log) String() string {
-	return fmt.Sprintf("Log[%v, %v]", l.FlagString(), l.LevelString())
-}
-
-func (l Log) LevelString() string {
-	var buff bytes.Buffer
-	buff.WriteString("LogLevel[")
-	for i := LL_Type(1); i < LL_END; i <<= 1 {
-		if l.IsLevel(i) {
-			fmt.Fprintf(&buff, "%s ", i)
-		}
-	}
-	buff.WriteString("]")
-	return buff.String()
-}
-
-func (l Log) FlagString() string {
-	var buff bytes.Buffer
-	buff.WriteString("LogFlag[")
-	for i := LF_Type(1); i < LF_END; i <<= 1 {
-		if l.flag&i != 0 {
-			fmt.Fprintf(&buff, "%s ", i)
-		}
-	}
-	buff.WriteString("]")
-	return buff.String()
+	return fmt.Sprintf("Log[%v, %v]",
+		l.flag.FlagString(),
+		l.loglevel.LevelString())
 }
 
 func (l *Log) SetPrefix(p string) {

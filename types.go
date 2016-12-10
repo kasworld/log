@@ -56,6 +56,30 @@ const (
 	LL_All = LL_Debug | LL_Info | LL_Warn | LL_Error | LL_Fatal
 )
 
+func (ll LL_Type) LevelString() string {
+	var buff bytes.Buffer
+	buff.WriteString("LogLevel[")
+	for i := LL_Type(1); i < LL_END; i <<= 1 {
+		if ll&i != 0 {
+			fmt.Fprintf(&buff, "%s ", i)
+		}
+	}
+	buff.WriteString("]")
+	return buff.String()
+}
+
+func (lf LF_Type) FlagString() string {
+	var buff bytes.Buffer
+	buff.WriteString("LogFlag[")
+	for i := LF_Type(1); i < LF_END; i <<= 1 {
+		if lf&i != 0 {
+			fmt.Fprintf(&buff, "%s ", i)
+		}
+	}
+	buff.WriteString("]")
+	return buff.String()
+}
+
 func AllLevelString() string {
 	var buff bytes.Buffer
 	buff.WriteString("LogLevel[")
