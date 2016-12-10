@@ -17,6 +17,7 @@ import (
 	"io"
 	"os"
 	"sync"
+	"time"
 )
 
 type Log struct {
@@ -84,7 +85,7 @@ func (l Log) LogPrintf(calldepth int, ll LL_Type, format string, v ...interface{
 	s := fmt.Sprintf(format, v...)
 
 	var buf []byte
-	FormatHeader(&buf, l.flag, l.prefix, calldepth+1, llinfo)
+	FormatHeader(&buf, calldepth+1, time.Now(), l.flag, l.prefix, llinfo)
 	buf = append(buf, s...)
 	if len(s) == 0 || s[len(s)-1] != '\n' {
 		buf = append(buf, '\n')

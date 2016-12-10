@@ -34,9 +34,13 @@ func itoa(buf *[]byte, i int, wid int) {
 	*buf = append(*buf, b[bp:]...)
 }
 
-func FormatHeader(buf *[]byte, logflag LF_Type, prefix string, calldepth int, llinfo string) {
+func FormatHeader(
+	buf *[]byte,
+	calldepth int,
+	now time.Time,
+	logflag LF_Type, prefix string, llinfo string) {
 
-	now := time.Now() // get this early.
+	// now := time.Now() // get this early.
 	var file string
 	var fnname string
 	var line int
