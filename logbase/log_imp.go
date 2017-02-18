@@ -14,7 +14,6 @@ package logbase
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/kasworld/log/logflags"
 	"github.com/kasworld/log/loglevels"
@@ -69,29 +68,6 @@ func (l Log) IsLevel(level loglevels.LL_Type) bool {
 }
 
 func (l *Log) Printf(ll loglevels.LL_Type, format string, v ...interface{}) error {
-	// calldepth := 2
 	s := l.LogPrintf(2, ll, format, v...)
 	return l.Output(s)
-}
-
-func (l *Log) Info(format string, v ...interface{}) {
-	s := l.LogPrintf(2, loglevels.LL_Info, format, v...)
-	l.Output(s)
-}
-func (l *Log) Warn(format string, v ...interface{}) {
-	s := l.LogPrintf(2, loglevels.LL_Warn, format, v...)
-	l.Output(s)
-}
-func (l *Log) Debug(format string, v ...interface{}) {
-	s := l.LogPrintf(2, loglevels.LL_Debug, format, v...)
-	l.Output(s)
-}
-func (l *Log) Error(format string, v ...interface{}) {
-	s := l.LogPrintf(2, loglevels.LL_Error, format, v...)
-	l.Output(s)
-}
-func (l *Log) Fatal(format string, v ...interface{}) {
-	s := l.LogPrintf(2, loglevels.LL_Fatal, format, v...)
-	l.Output(s)
-	os.Exit(1)
 }

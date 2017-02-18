@@ -12,7 +12,6 @@ package log
 
 import (
 	// "io"
-	"os"
 
 	"github.com/kasworld/log/logbase"
 	"github.com/kasworld/log/logdest_stdio"
@@ -37,27 +36,6 @@ func LevelString() string {
 func Printf(format string, v ...interface{}) {
 	s := logger.LogPrintf(2, loglevels.LL_Info, format, v...)
 	logger.Output(s)
-}
-func Info(format string, v ...interface{}) {
-	s := logger.LogPrintf(2, loglevels.LL_Info, format, v...)
-	logger.Output(s)
-}
-func Warn(format string, v ...interface{}) {
-	s := logger.LogPrintf(2, loglevels.LL_Warn, format, v...)
-	logger.Output(s)
-}
-func Debug(format string, v ...interface{}) {
-	s := logger.LogPrintf(2, loglevels.LL_Debug, format, v...)
-	logger.Output(s)
-}
-func Error(format string, v ...interface{}) {
-	s := logger.LogPrintf(2, loglevels.LL_Error, format, v...)
-	logger.Output(s)
-}
-func Fatal(format string, v ...interface{}) {
-	s := logger.LogPrintf(2, loglevels.LL_Fatal, format, v...)
-	logger.Output(s)
-	os.Exit(1)
 }
 
 func AddLevel(level loglevels.LL_Type) {
