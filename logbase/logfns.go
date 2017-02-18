@@ -10,7 +10,7 @@
 // limitations under the License.
 // python like log package
 // can use instead of standard log package
-package log
+package logbase
 
 import (
 	"fmt"

@@ -10,7 +10,7 @@
 // limitations under the License.
 // python like log package
 // can use instead of standard log package
-package log
+package logbase
 
 import (
 	"fmt"
@@ -30,8 +30,6 @@ type Log struct {
 	loglevel loglevels.LL_Type
 	prefix   string // prefix to write at beginning of each line
 	logdst   logdesti.LogDestI
-	// filename string
-	// out      io.WriteCloser
 }
 
 func New(dst logdesti.LogDestI, prefix string, loglevel loglevels.LL_Type, release bool) *Log {
