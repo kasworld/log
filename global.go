@@ -14,11 +14,12 @@ import (
 	// "io"
 	"os"
 
+	"github.com/kasworld/log/logdest_stdio"
 	"github.com/kasworld/log/logflags"
 	"github.com/kasworld/log/loglevels"
 )
 
-var logger = New(os.Stdout, "", loglevels.LL_All, false)
+var logger = New(logdest_stdio.NewStdOut(), "", loglevels.LL_All, false)
 
 func SetLogger(l *Log) {
 	logger = l

@@ -14,11 +14,11 @@ package log
 
 import (
 	"fmt"
-	"io"
-	"os"
 	"sync"
 	"time"
 
+	"github.com/kasworld/log/logdest_file"
+	"github.com/kasworld/log/logdesti"
 	"github.com/kasworld/log/logflags"
 	"github.com/kasworld/log/logformater"
 	"github.com/kasworld/log/loglevels"
@@ -29,11 +29,12 @@ type Log struct {
 	flag     logflags.LF_Type // properties
 	loglevel loglevels.LL_Type
 	prefix   string // prefix to write at beginning of each line
-	filename string
-	out      io.WriteCloser
+	logdst   logdesti.LogDestI
+	// filename string
+	// out      io.WriteCloser
 }
 
-func New(w io.WriteCloser, prefix string, loglevel loglevels.LL_Type, release bool) *Log {
+func New(dst logdesti.LogDestI, prefix string, loglevel loglevels.LL_Type, release bool) *Log {
 	flags := logflags.LF_stdFlags
 	if !release {
 		flags = logflags.LF_time | logflags.LF_shortfile | logflags.LF_functionname
@@ -43,35 +44,22 @@ func New(w io.WriteCloser, prefix string, loglevel loglevels.LL_Type, release bo
 		prefix:   prefix,
 		flag:     flags,
 		loglevel: loglevel,
-		out:      w,
+		logdst:   dst,
 	}
 	return &l
 }
 
 func NewFile(filename string, prefix string, loglevel loglevels.LL_Type, release bool) (*Log, error) {
-	f, err := os.OpenFile(filename, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
+	dst, err := logdest_file.New(filename)
 	if err != nil {
 		return nil, err
 	}
-	l := New(f, prefix, loglevel, release)
-	l.filename = filename
+	l := New(dst, prefix, loglevel, release)
 	return l, nil
 }
 
 func (l *Log) Reload() error {
-	if l.filename == "" {
-		return fmt.Errorf("not file log")
-	}
-	l.mutex.Lock()
-	defer l.mutex.Unlock()
-	l.out.Close()
-
-	out, err := os.OpenFile(l.filename, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
-	if err != nil {
-		return err
-	}
-	l.out = out
-	return nil
+	return l.logdst.Reload()
 }
 
 func (l Log) LogPrintf(calldepth int, ll loglevels.LL_Type, format string, v ...interface{}) []byte {
@@ -89,9 +77,6 @@ func (l Log) LogPrintf(calldepth int, ll loglevels.LL_Type, format string, v ...
 	return buf
 }
 
-func (l *Log) Output(s []byte) error {
-	l.mutex.Lock()
-	defer l.mutex.Unlock()
-	_, err := l.out.Write(s)
-	return err
+func (l *Log) Output(b []byte) error {
+	return l.logdst.Output(b)
 }
