@@ -18,21 +18,25 @@ import (
 	"os"
 	"sync"
 	"time"
+
+	"github.com/kasworld/log/logflags"
+	"github.com/kasworld/log/logformater"
+	"github.com/kasworld/log/loglevels"
 )
 
 type Log struct {
-	mutex    sync.Mutex // ensures atomic writes; protects the following fields
-	flag     LF_Type    // properties
-	loglevel LL_Type
+	mutex    sync.Mutex       // ensures atomic writes; protects the following fields
+	flag     logflags.LF_Type // properties
+	loglevel loglevels.LL_Type
 	prefix   string // prefix to write at beginning of each line
 	filename string
 	out      io.WriteCloser
 }
 
-func New(w io.WriteCloser, prefix string, loglevel LL_Type, release bool) *Log {
-	flags := LF_stdFlags
+func New(w io.WriteCloser, prefix string, loglevel loglevels.LL_Type, release bool) *Log {
+	flags := logflags.LF_stdFlags
 	if !release {
-		flags = LF_time | LF_shortfile | LF_functionname
+		flags = logflags.LF_time | logflags.LF_shortfile | logflags.LF_functionname
 	}
 
 	l := Log{
@@ -44,7 +48,7 @@ func New(w io.WriteCloser, prefix string, loglevel LL_Type, release bool) *Log {
 	return &l
 }
 
-func NewFile(filename string, prefix string, loglevel LL_Type, release bool) (*Log, error) {
+func NewFile(filename string, prefix string, loglevel loglevels.LL_Type, release bool) (*Log, error) {
 	f, err := os.OpenFile(filename, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
 	if err != nil {
 		return nil, err
@@ -70,15 +74,14 @@ func (l *Log) Reload() error {
 	return nil
 }
 
-func (l Log) LogPrintf(calldepth int, ll LL_Type, format string, v ...interface{}) []byte {
+func (l Log) LogPrintf(calldepth int, ll loglevels.LL_Type, format string, v ...interface{}) []byte {
 	if !l.IsLevel(ll) {
 		return nil
 	}
-	llinfo := fmt.Sprintf("%s", ll)
 	s := fmt.Sprintf(format, v...)
 
 	var buf []byte
-	FormatHeader(&buf, calldepth+1, time.Now(), l.flag, l.prefix, llinfo)
+	logformater.FormatHeader(&buf, calldepth+1, time.Now(), l.flag, l.prefix, ll)
 	buf = append(buf, s...)
 	if len(s) == 0 || s[len(s)-1] != '\n' {
 		buf = append(buf, '\n')

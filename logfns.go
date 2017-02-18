@@ -15,6 +15,9 @@ package log
 import (
 	"fmt"
 	"os"
+
+	"github.com/kasworld/log/logflags"
+	"github.com/kasworld/log/loglevels"
 )
 
 func (l Log) String() string {
@@ -35,60 +38,60 @@ func (l Log) GetPrefix() string {
 }
 
 // Flags returns the output flags for the logger.
-func (l Log) GetFlags() LF_Type {
+func (l Log) GetFlags() logflags.LF_Type {
 	return l.flag
 }
 
 // SetFlags sets the output flags for the logger.
-func (l *Log) SetFlags(flag LF_Type) {
+func (l *Log) SetFlags(flag logflags.LF_Type) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 	l.flag = flag
 }
 
-func (l *Log) AddLevel(level LL_Type) {
+func (l *Log) AddLevel(level loglevels.LL_Type) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 	l.loglevel |= level
 }
-func (l *Log) SetLevel(level LL_Type) {
+func (l *Log) SetLevel(level loglevels.LL_Type) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 	l.loglevel = level
 }
-func (l *Log) DelLevel(level LL_Type) {
+func (l *Log) DelLevel(level loglevels.LL_Type) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 	l.loglevel &= ^level
 }
-func (l Log) IsLevel(level LL_Type) bool {
+func (l Log) IsLevel(level loglevels.LL_Type) bool {
 	return l.loglevel&level != 0
 }
 
-func (l *Log) Printf(ll LL_Type, format string, v ...interface{}) error {
+func (l *Log) Printf(ll loglevels.LL_Type, format string, v ...interface{}) error {
 	// calldepth := 2
 	s := l.LogPrintf(2, ll, format, v...)
 	return l.Output(s)
 }
 
 func (l *Log) Info(format string, v ...interface{}) {
-	s := l.LogPrintf(2, LL_Info, format, v...)
+	s := l.LogPrintf(2, loglevels.LL_Info, format, v...)
 	l.Output(s)
 }
 func (l *Log) Warn(format string, v ...interface{}) {
-	s := l.LogPrintf(2, LL_Warn, format, v...)
+	s := l.LogPrintf(2, loglevels.LL_Warn, format, v...)
 	l.Output(s)
 }
 func (l *Log) Debug(format string, v ...interface{}) {
-	s := l.LogPrintf(2, LL_Debug, format, v...)
+	s := l.LogPrintf(2, loglevels.LL_Debug, format, v...)
 	l.Output(s)
 }
 func (l *Log) Error(format string, v ...interface{}) {
-	s := l.LogPrintf(2, LL_Error, format, v...)
+	s := l.LogPrintf(2, loglevels.LL_Error, format, v...)
 	l.Output(s)
 }
 func (l *Log) Fatal(format string, v ...interface{}) {
-	s := l.LogPrintf(2, LL_Fatal, format, v...)
+	s := l.LogPrintf(2, loglevels.LL_Fatal, format, v...)
 	l.Output(s)
 	os.Exit(1)
 }

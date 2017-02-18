@@ -13,9 +13,12 @@ package log
 import (
 	// "io"
 	"os"
+
+	"github.com/kasworld/log/logflags"
+	"github.com/kasworld/log/loglevels"
 )
 
-var logger = New(os.Stdout, "", LL_All, false)
+var logger = New(os.Stdout, "", loglevels.LL_All, false)
 
 func SetLogger(l *Log) {
 	logger = l
@@ -30,41 +33,41 @@ func LevelString() string {
 }
 
 func Printf(format string, v ...interface{}) {
-	s := logger.LogPrintf(2, LL_Info, format, v...)
+	s := logger.LogPrintf(2, loglevels.LL_Info, format, v...)
 	logger.Output(s)
 }
 func Info(format string, v ...interface{}) {
-	s := logger.LogPrintf(2, LL_Info, format, v...)
+	s := logger.LogPrintf(2, loglevels.LL_Info, format, v...)
 	logger.Output(s)
 }
 func Warn(format string, v ...interface{}) {
-	s := logger.LogPrintf(2, LL_Warn, format, v...)
+	s := logger.LogPrintf(2, loglevels.LL_Warn, format, v...)
 	logger.Output(s)
 }
 func Debug(format string, v ...interface{}) {
-	s := logger.LogPrintf(2, LL_Debug, format, v...)
+	s := logger.LogPrintf(2, loglevels.LL_Debug, format, v...)
 	logger.Output(s)
 }
 func Error(format string, v ...interface{}) {
-	s := logger.LogPrintf(2, LL_Error, format, v...)
+	s := logger.LogPrintf(2, loglevels.LL_Error, format, v...)
 	logger.Output(s)
 }
 func Fatal(format string, v ...interface{}) {
-	s := logger.LogPrintf(2, LL_Fatal, format, v...)
+	s := logger.LogPrintf(2, loglevels.LL_Fatal, format, v...)
 	logger.Output(s)
 	os.Exit(1)
 }
 
-func AddLevel(level LL_Type) {
+func AddLevel(level loglevels.LL_Type) {
 	logger.AddLevel(level)
 }
-func SetLevel(level LL_Type) {
+func SetLevel(level loglevels.LL_Type) {
 	logger.SetLevel(level)
 }
-func DelLevel(level LL_Type) {
+func DelLevel(level loglevels.LL_Type) {
 	logger.DelLevel(level)
 }
-func IsLevel(level LL_Type) bool {
+func IsLevel(level loglevels.LL_Type) bool {
 	return logger.IsLevel(level)
 }
 
@@ -78,11 +81,11 @@ func GetPrefix() string {
 }
 
 // Flags returns the output flags for the logger.
-func GetFlags() LF_Type {
+func GetFlags() logflags.LF_Type {
 	return logger.GetFlags()
 }
 
 // SetFlags sets the output flags for the logger.
-func SetFlags(flag LF_Type) {
+func SetFlags(flag logflags.LF_Type) {
 	logger.SetFlags(flag)
 }

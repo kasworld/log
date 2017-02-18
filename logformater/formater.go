@@ -10,11 +10,15 @@
 // limitations under the License.
 // python like log package
 // can use instead of standard log package
-package log
+package logformater
 
 import (
+	"fmt"
 	"runtime"
 	"time"
+
+	"github.com/kasworld/log/logflags"
+	"github.com/kasworld/log/loglevels"
 )
 
 //// Cheap integer to fixed-width decimal ASCII.  Give a negative width to avoid zero-padding.
@@ -38,14 +42,14 @@ func FormatHeader(
 	buf *[]byte,
 	calldepth int,
 	now time.Time,
-	logflag LF_Type, prefix string, llinfo string) {
+	logflag logflags.LF_Type, prefix string, ll loglevels.LL_Type) {
 
 	// now := time.Now() // get this early.
 	var file string
 	var fnname string
 	var line int
 	var pc uintptr
-	if logflag&(LF_shortfile|LF_longfile|LF_functionname) != 0 {
+	if logflag&(logflags.LF_shortfile|logflags.LF_longfile|logflags.LF_functionname) != 0 {
 		// release lock while getting caller info - it's expensive.
 		var ok bool
 		pc, file, line, ok = runtime.Caller(calldepth)
@@ -53,23 +57,24 @@ func FormatHeader(
 			file = "???"
 			line = 0
 			fnname = "???"
-		} else if logflag&LF_functionname != 0 {
+		} else if logflag&logflags.LF_functionname != 0 {
 			fn := runtime.FuncForPC(pc)
 			fnname = fn.Name()
 		}
 	}
 
-	if logflag&LF_prefix != 0 {
+	if logflag&logflags.LF_prefix != 0 {
 		*buf = append(*buf, prefix...)
 		*buf = append(*buf, ' ')
 	}
+	llinfo := fmt.Sprintf("%s", ll)
 	*buf = append(*buf, llinfo...)
 	*buf = append(*buf, ' ')
-	if logflag&LF_UTC != 0 {
+	if logflag&logflags.LF_UTC != 0 {
 		now = now.UTC()
 	}
-	if logflag&(LF_date|LF_time|LF_microseconds) != 0 {
-		if logflag&LF_date != 0 {
+	if logflag&(logflags.LF_date|logflags.LF_time|logflags.LF_microseconds) != 0 {
+		if logflag&logflags.LF_date != 0 {
 			year, month, day := now.Date()
 			itoa(buf, year, 4)
 			*buf = append(*buf, '/')
@@ -78,22 +83,22 @@ func FormatHeader(
 			itoa(buf, day, 2)
 			*buf = append(*buf, ' ')
 		}
-		if logflag&(LF_time|LF_microseconds) != 0 {
+		if logflag&(logflags.LF_time|logflags.LF_microseconds) != 0 {
 			hour, min, sec := now.Clock()
 			itoa(buf, hour, 2)
 			*buf = append(*buf, ':')
 			itoa(buf, min, 2)
 			*buf = append(*buf, ':')
 			itoa(buf, sec, 2)
-			if logflag&LF_microseconds != 0 {
+			if logflag&logflags.LF_microseconds != 0 {
 				*buf = append(*buf, '.')
 				itoa(buf, now.Nanosecond()/1e3, 6)
 			}
 			*buf = append(*buf, ' ')
 		}
 	}
-	if logflag&(LF_shortfile|LF_longfile) != 0 {
-		if logflag&LF_shortfile != 0 {
+	if logflag&(logflags.LF_shortfile|logflags.LF_longfile) != 0 {
+		if logflag&logflags.LF_shortfile != 0 {
 			short := file
 			for i := len(file) - 1; i > 0; i-- {
 				if file[i] == '/' {
@@ -106,7 +111,7 @@ func FormatHeader(
 		*buf = append(*buf, file...)
 		*buf = append(*buf, ':')
 		itoa(buf, line, -1)
-		if logflag&(LF_functionname) != 0 {
+		if logflag&(logflags.LF_functionname) != 0 {
 			*buf = append(*buf, ':')
 			*buf = append(*buf, fnname...)
 		}
