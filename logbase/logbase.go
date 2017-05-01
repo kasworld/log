@@ -20,11 +20,10 @@ import (
 	"github.com/kasworld/log/logdest_file"
 	"github.com/kasworld/log/logdesti"
 	"github.com/kasworld/log/logflags"
-	"github.com/kasworld/log/logformater"
 	"github.com/kasworld/log/loglevels"
 )
 
-type Log struct {
+type LogBase struct {
 	mutex    sync.Mutex       // ensures atomic writes; protects the following fields
 	flag     logflags.LF_Type // properties
 	loglevel loglevels.LL_Type
@@ -32,13 +31,13 @@ type Log struct {
 	logdst   logdesti.LogDestI
 }
 
-func New(dst logdesti.LogDestI, prefix string, loglevel loglevels.LL_Type, release bool) *Log {
+func New(dst logdesti.LogDestI, prefix string, loglevel loglevels.LL_Type, release bool) *LogBase {
 	flags := logflags.LF_stdFlags
 	if !release {
 		flags = logflags.LF_time | logflags.LF_shortfile | logflags.LF_functionname
 	}
 
-	l := Log{
+	l := LogBase{
 		prefix:   prefix,
 		flag:     flags,
 		loglevel: loglevel,
@@ -47,7 +46,7 @@ func New(dst logdesti.LogDestI, prefix string, loglevel loglevels.LL_Type, relea
 	return &l
 }
 
-func NewFile(filename string, prefix string, loglevel loglevels.LL_Type, release bool) (*Log, error) {
+func NewFile(filename string, prefix string, loglevel loglevels.LL_Type, release bool) (*LogBase, error) {
 	dst, err := logdest_file.New(filename)
 	if err != nil {
 		return nil, err
@@ -56,18 +55,19 @@ func NewFile(filename string, prefix string, loglevel loglevels.LL_Type, release
 	return l, nil
 }
 
-func (l *Log) Reload() error {
+func (l *LogBase) Reload() error {
 	return l.logdst.Reload()
 }
 
-func (l Log) LogPrintf(calldepth int, ll loglevels.LL_Type, format string, v ...interface{}) []byte {
+func (l LogBase) LogPrintf(calldepth int, ll loglevels.LL_Type, format string, v ...interface{}) []byte {
 	if !l.IsLevel(ll) {
 		return nil
 	}
 	s := fmt.Sprintf(format, v...)
 
 	var buf []byte
-	logformater.FormatHeader(&buf, calldepth+1, time.Now(), l.flag, l.prefix, ll)
+	llinfo := fmt.Sprintf("%s", ll)
+	l.flag.FormatHeader(&buf, calldepth+1, time.Now(), l.prefix, llinfo)
 	buf = append(buf, s...)
 	if len(s) == 0 || s[len(s)-1] != '\n' {
 		buf = append(buf, '\n')
@@ -75,6 +75,6 @@ func (l Log) LogPrintf(calldepth int, ll loglevels.LL_Type, format string, v ...
 	return buf
 }
 
-func (l *Log) Output(b []byte) error {
+func (l *LogBase) Output(b []byte) error {
 	return l.logdst.Output(b)
 }

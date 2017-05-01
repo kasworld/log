@@ -14,60 +14,67 @@ package logbase
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/kasworld/log/logflags"
 	"github.com/kasworld/log/loglevels"
 )
 
-func (l Log) String() string {
-	return fmt.Sprintf("Log[%v, %v]",
+func (l LogBase) String() string {
+	return fmt.Sprintf("LogBase[%v, %v]",
 		l.flag.FlagString(),
 		l.loglevel.LevelString())
 }
 
-func (l *Log) SetPrefix(p string) {
+func (l *LogBase) SetPrefix(p string) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 	l.prefix = p
 }
 
 // Prefix returns the output prefix for the logger.
-func (l Log) GetPrefix() string {
+func (l LogBase) GetPrefix() string {
 	return l.prefix
 }
 
 // Flags returns the output flags for the logger.
-func (l Log) GetFlags() logflags.LF_Type {
+func (l LogBase) GetFlags() logflags.LF_Type {
 	return l.flag
 }
 
 // SetFlags sets the output flags for the logger.
-func (l *Log) SetFlags(flag logflags.LF_Type) {
+func (l *LogBase) SetFlags(flag logflags.LF_Type) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 	l.flag = flag
 }
 
-func (l *Log) AddLevel(level loglevels.LL_Type) {
+func (l *LogBase) AddLevel(level loglevels.LL_Type) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 	l.loglevel |= level
 }
-func (l *Log) SetLevel(level loglevels.LL_Type) {
+func (l *LogBase) SetLevel(level loglevels.LL_Type) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 	l.loglevel = level
 }
-func (l *Log) DelLevel(level loglevels.LL_Type) {
+func (l *LogBase) DelLevel(level loglevels.LL_Type) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 	l.loglevel &= ^level
 }
-func (l Log) IsLevel(level loglevels.LL_Type) bool {
+func (l LogBase) IsLevel(level loglevels.LL_Type) bool {
 	return l.loglevel&level != 0
 }
 
-func (l *Log) Printf(ll loglevels.LL_Type, format string, v ...interface{}) error {
+func (l *LogBase) Printf(ll loglevels.LL_Type, format string, v ...interface{}) error {
 	s := l.LogPrintf(2, ll, format, v...)
 	return l.Output(s)
+}
+
+func (l *LogBase) Panic(format string, v ...interface{}) {
+	s := l.LogPrintf(2, loglevels.LL_Fatal, format, v...)
+	l.Output(s)
+	os.Exit(1)
 }

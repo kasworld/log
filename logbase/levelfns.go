@@ -18,23 +18,24 @@ import (
 	"github.com/kasworld/log/loglevels"
 )
 
-func (l *Log) Info(format string, v ...interface{}) {
+func (l *LogBase) Info(format string, v ...interface{}) {
 	s := l.LogPrintf(2, loglevels.LL_Info, format, v...)
 	l.Output(s)
 }
-func (l *Log) Warn(format string, v ...interface{}) {
+func (l *LogBase) Warn(format string, v ...interface{}) {
 	s := l.LogPrintf(2, loglevels.LL_Warn, format, v...)
 	l.Output(s)
 }
-func (l *Log) Debug(format string, v ...interface{}) {
+func (l *LogBase) Debug(format string, v ...interface{}) {
 	s := l.LogPrintf(2, loglevels.LL_Debug, format, v...)
 	l.Output(s)
 }
-func (l *Log) Error(format string, v ...interface{}) {
+func (l *LogBase) Error(format string, v ...interface{}) {
 	s := l.LogPrintf(2, loglevels.LL_Error, format, v...)
 	l.Output(s)
 }
-func (l *Log) Fatal(format string, v ...interface{}) {
+
+func (l *LogBase) Fatal(format string, v ...interface{}) {
 	s := l.LogPrintf(2, loglevels.LL_Fatal, format, v...)
 	l.Output(s)
 	os.Exit(1)

@@ -21,7 +21,7 @@ import (
 
 var logger = logbase.New(logdest_stdio.NewStdOut(), "", loglevels.LL_All, false)
 
-func SetLogger(l *logbase.Log) {
+func SetLogger(l *logbase.LogBase) {
 	logger = l
 }
 
