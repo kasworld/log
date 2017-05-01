@@ -52,20 +52,20 @@ func (l *LogBase) SetFlags(flag logflags.LF_Type) {
 func (l *LogBase) AddLevel(level loglevels.LL_Type) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
-	l.loglevel |= level
+	l.loglevel.AddLevel(level)
 }
 func (l *LogBase) SetLevel(level loglevels.LL_Type) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
-	l.loglevel = level
+	l.loglevel.SetLevel(level)
 }
 func (l *LogBase) DelLevel(level loglevels.LL_Type) {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
-	l.loglevel &= ^level
+	l.loglevel.DelLevel(level)
 }
 func (l LogBase) IsLevel(level loglevels.LL_Type) bool {
-	return l.loglevel&level != 0
+	return l.loglevel.IsLevel(level)
 }
 
 func (l *LogBase) Printf(ll loglevels.LL_Type, format string, v ...interface{}) error {

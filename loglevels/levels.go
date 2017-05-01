@@ -8,8 +8,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// python like log package
-// can use instead of standard log package
 
 package loglevels
 
@@ -51,4 +49,17 @@ func AllLevelString() string {
 	}
 	buff.WriteString("]")
 	return buff.String()
+}
+
+func (l *LL_Type) AddLevel(level LL_Type) {
+	*l |= level
+}
+func (l *LL_Type) SetLevel(level LL_Type) {
+	*l = level
+}
+func (l *LL_Type) DelLevel(level LL_Type) {
+	*l &= ^level
+}
+func (l LL_Type) IsLevel(level LL_Type) bool {
+	return l&level != 0
 }

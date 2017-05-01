@@ -12,26 +12,17 @@
 // can use instead of standard log package
 package logbase
 
-import "github.com/kasworld/log/loglevels"
+import (
+	"testing"
 
-func (l *LogBase) Info(format string, v ...interface{}) {
-	s := l.LogPrintf(2, loglevels.LL_Info, format, v...)
-	l.Output(s)
-}
-func (l *LogBase) Warn(format string, v ...interface{}) {
-	s := l.LogPrintf(2, loglevels.LL_Warn, format, v...)
-	l.Output(s)
-}
-func (l *LogBase) Debug(format string, v ...interface{}) {
-	s := l.LogPrintf(2, loglevels.LL_Debug, format, v...)
-	l.Output(s)
-}
-func (l *LogBase) Error(format string, v ...interface{}) {
-	s := l.LogPrintf(2, loglevels.LL_Error, format, v...)
-	l.Output(s)
-}
+	"github.com/kasworld/log/logdest_stdio"
+	"github.com/kasworld/log/loglevels"
+)
 
-func (l *LogBase) Fatal(format string, v ...interface{}) {
-	s := l.LogPrintf(2, loglevels.LL_Fatal, format, v...)
-	l.Output(s)
+func TestLogBase_AddLevel(t *testing.T) {
+	logger := New(logdest_stdio.NewStdOut(), "", loglevels.LL_All, false)
+	t.Logf("%v", logger)
+
+	logger.DelLevel(loglevels.LL_Debug)
+	t.Logf("%v", logger)
 }
