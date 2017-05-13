@@ -78,3 +78,11 @@ func (l *LogBase) Panic(format string, v ...interface{}) {
 	l.Output(s)
 	os.Exit(1)
 }
+
+func (l *LogBase) NewErrorWithLog(
+	ll loglevels.LL_Type, format string, v ...interface{}) error {
+
+	s := l.LogPrintf(2, ll, format, v...)
+	l.Output(s)
+	return fmt.Errorf(format, v...)
+}
