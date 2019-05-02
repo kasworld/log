@@ -1,4 +1,4 @@
-// Copyright 2015 SeukWon Kang (kasworld@gmail.com)
+// Copyright 2015,2016,2017,2018,2019 SeukWon Kang (kasworld@gmail.com)
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -8,6 +8,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 // python like log package
 // can use instead of standard log package
 
@@ -18,6 +19,8 @@ import (
 	"fmt"
 	"runtime"
 	"time"
+
+	"github.com/kasworld/log/logflagi"
 )
 
 //go:generate stringer -type=LF_Type
@@ -45,6 +48,37 @@ const (
 	LF_END
 	LF_stdFlags = LF_date | LF_time // initial values for the standard logger
 )
+
+func DefaultValue(release bool) LF_Type {
+	flags := LF_stdFlags
+	if !release {
+		flags |= LF_date | LF_time | LF_shortfile // | LF_functionname
+	}
+	if release {
+		flags |= LF_UTC
+	}
+	return flags
+}
+
+func (lf LF_Type) BitAnd(lf2 logflagi.LogFlagI) logflagi.LogFlagI {
+	return lf & lf2.(LF_Type)
+}
+
+func (lf LF_Type) BitOr(lf2 logflagi.LogFlagI) logflagi.LogFlagI {
+	return lf | lf2.(LF_Type)
+}
+
+func (lf LF_Type) BitNeg(lf2 logflagi.LogFlagI) logflagi.LogFlagI {
+	return lf ^ lf2.(LF_Type)
+}
+
+func (lf LF_Type) BitClear(lf2 logflagi.LogFlagI) logflagi.LogFlagI {
+	return lf &^ lf2.(LF_Type)
+}
+
+func (lf LF_Type) BitTest(lf2 logflagi.LogFlagI) bool {
+	return lf&lf2.(LF_Type) == 0
+}
 
 func (lf LF_Type) FlagString() string {
 	var buff bytes.Buffer
@@ -153,4 +187,44 @@ func (logflag LF_Type) FormatHeader(
 		}
 		*buf = append(*buf, ": "...)
 	}
+}
+
+func (logflag LF_Type) ParseHeader(buf []byte) (
+	prefix string, llinfo string,
+	datestr string, timestr string,
+	filestr string,
+	remainbuf []byte) {
+
+	remainbuf = buf
+
+	if logflag&LF_prefix != 0 {
+		split := bytes.SplitN(remainbuf, []byte{' '}, 2)
+		prefix = string(split[0])
+		remainbuf = split[1]
+	}
+
+	split := bytes.SplitN(remainbuf, []byte{' '}, 2)
+	llinfo = string(split[0])
+	remainbuf = split[1]
+
+	if logflag&(LF_date|LF_time|LF_microseconds) != 0 {
+		if logflag&LF_date != 0 {
+			split := bytes.SplitN(remainbuf, []byte{' '}, 2)
+			datestr = string(split[0])
+			remainbuf = split[1]
+		}
+		if logflag&(LF_time|LF_microseconds) != 0 {
+			split := bytes.SplitN(remainbuf, []byte{' '}, 2)
+			timestr = string(split[0])
+			remainbuf = split[1]
+			if logflag&LF_microseconds != 0 {
+			}
+		}
+	}
+	if logflag&(LF_shortfile|LF_longfile) != 0 {
+		split := bytes.SplitN(remainbuf, []byte{' '}, 2)
+		filestr = string(split[0])
+		remainbuf = split[1]
+	}
+	return
 }
