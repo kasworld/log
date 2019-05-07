@@ -124,6 +124,7 @@ func Build(packagename string, leveldata []string) (*bytes.Buffer, error) {
 	fmt.Fprintln(&buff, packageparser.MakeGenComment())
 	fmt.Fprintf(&buff, `
 		package %[1]s
+		import "fmt"
 		`,
 		packagename)
 
