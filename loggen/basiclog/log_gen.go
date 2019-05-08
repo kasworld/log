@@ -24,14 +24,14 @@ var leveldata = map[LL_Type]string{
 }
 
 func Fatal(format string, v ...interface{}) {
-	s := GlobalLogger.Format2Bytes(2, LL_Fatal, format, v...)
+	s := GlobalLogger.Format2Bytes(1, LL_Fatal, format, v...)
 	err := GlobalLogger.Output(LL_Fatal, s)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 func NewErrorWithFatalLog(format string, v ...interface{}) error {
-	s := GlobalLogger.Format2Bytes(2, LL_Fatal, format, v...)
+	s := GlobalLogger.Format2Bytes(1, LL_Fatal, format, v...)
 	err := GlobalLogger.Output(LL_Fatal, s)
 	if err != nil {
 		fmt.Println(err)
@@ -40,14 +40,14 @@ func NewErrorWithFatalLog(format string, v ...interface{}) error {
 }
 
 func (l LogBase) Fatal(format string, v ...interface{}) {
-	s := l.Format2Bytes(2, LL_Fatal, format, v...)
+	s := l.Format2Bytes(1, LL_Fatal, format, v...)
 	err := l.Output(LL_Fatal, s)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 func (l LogBase) NewErrorWithFatalLog(format string, v ...interface{}) error {
-	s := l.Format2Bytes(2, LL_Fatal, format, v...)
+	s := l.Format2Bytes(1, LL_Fatal, format, v...)
 	err := l.Output(LL_Fatal, s)
 	if err != nil {
 		fmt.Println(err)
@@ -56,14 +56,14 @@ func (l LogBase) NewErrorWithFatalLog(format string, v ...interface{}) error {
 }
 
 func Error(format string, v ...interface{}) {
-	s := GlobalLogger.Format2Bytes(2, LL_Error, format, v...)
+	s := GlobalLogger.Format2Bytes(1, LL_Error, format, v...)
 	err := GlobalLogger.Output(LL_Error, s)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 func NewErrorWithErrorLog(format string, v ...interface{}) error {
-	s := GlobalLogger.Format2Bytes(2, LL_Error, format, v...)
+	s := GlobalLogger.Format2Bytes(1, LL_Error, format, v...)
 	err := GlobalLogger.Output(LL_Error, s)
 	if err != nil {
 		fmt.Println(err)
@@ -72,14 +72,14 @@ func NewErrorWithErrorLog(format string, v ...interface{}) error {
 }
 
 func (l LogBase) Error(format string, v ...interface{}) {
-	s := l.Format2Bytes(2, LL_Error, format, v...)
+	s := l.Format2Bytes(1, LL_Error, format, v...)
 	err := l.Output(LL_Error, s)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 func (l LogBase) NewErrorWithErrorLog(format string, v ...interface{}) error {
-	s := l.Format2Bytes(2, LL_Error, format, v...)
+	s := l.Format2Bytes(1, LL_Error, format, v...)
 	err := l.Output(LL_Error, s)
 	if err != nil {
 		fmt.Println(err)
@@ -88,14 +88,14 @@ func (l LogBase) NewErrorWithErrorLog(format string, v ...interface{}) error {
 }
 
 func Warn(format string, v ...interface{}) {
-	s := GlobalLogger.Format2Bytes(2, LL_Warn, format, v...)
+	s := GlobalLogger.Format2Bytes(1, LL_Warn, format, v...)
 	err := GlobalLogger.Output(LL_Warn, s)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 func NewErrorWithWarnLog(format string, v ...interface{}) error {
-	s := GlobalLogger.Format2Bytes(2, LL_Warn, format, v...)
+	s := GlobalLogger.Format2Bytes(1, LL_Warn, format, v...)
 	err := GlobalLogger.Output(LL_Warn, s)
 	if err != nil {
 		fmt.Println(err)
@@ -104,14 +104,14 @@ func NewErrorWithWarnLog(format string, v ...interface{}) error {
 }
 
 func (l LogBase) Warn(format string, v ...interface{}) {
-	s := l.Format2Bytes(2, LL_Warn, format, v...)
+	s := l.Format2Bytes(1, LL_Warn, format, v...)
 	err := l.Output(LL_Warn, s)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 func (l LogBase) NewErrorWithWarnLog(format string, v ...interface{}) error {
-	s := l.Format2Bytes(2, LL_Warn, format, v...)
+	s := l.Format2Bytes(1, LL_Warn, format, v...)
 	err := l.Output(LL_Warn, s)
 	if err != nil {
 		fmt.Println(err)
@@ -120,14 +120,14 @@ func (l LogBase) NewErrorWithWarnLog(format string, v ...interface{}) error {
 }
 
 func Debug(format string, v ...interface{}) {
-	s := GlobalLogger.Format2Bytes(2, LL_Debug, format, v...)
+	s := GlobalLogger.Format2Bytes(1, LL_Debug, format, v...)
 	err := GlobalLogger.Output(LL_Debug, s)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 func NewErrorWithDebugLog(format string, v ...interface{}) error {
-	s := GlobalLogger.Format2Bytes(2, LL_Debug, format, v...)
+	s := GlobalLogger.Format2Bytes(1, LL_Debug, format, v...)
 	err := GlobalLogger.Output(LL_Debug, s)
 	if err != nil {
 		fmt.Println(err)
@@ -136,14 +136,14 @@ func NewErrorWithDebugLog(format string, v ...interface{}) error {
 }
 
 func (l LogBase) Debug(format string, v ...interface{}) {
-	s := l.Format2Bytes(2, LL_Debug, format, v...)
+	s := l.Format2Bytes(1, LL_Debug, format, v...)
 	err := l.Output(LL_Debug, s)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 func (l LogBase) NewErrorWithDebugLog(format string, v ...interface{}) error {
-	s := l.Format2Bytes(2, LL_Debug, format, v...)
+	s := l.Format2Bytes(1, LL_Debug, format, v...)
 	err := l.Output(LL_Debug, s)
 	if err != nil {
 		fmt.Println(err)

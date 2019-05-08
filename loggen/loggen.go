@@ -155,14 +155,14 @@ var leveldata = map[LL_Type]string{
 
 		fmt.Fprintf(&buff, `
 				func %[1]s(format string, v ...interface{}) {
-					s := GlobalLogger.Format2Bytes(2, LL_%[1]s, format, v...)
+					s := GlobalLogger.Format2Bytes(1, LL_%[1]s, format, v...)
 					err := GlobalLogger.Output(LL_%[1]s,s)
 					if err != nil {
 						fmt.Println(err)
 					}
 				}
 				func NewErrorWith%[1]sLog(format string, v ...interface{}) error {
-					s := GlobalLogger.Format2Bytes(2, LL_%[1]s, format, v...)
+					s := GlobalLogger.Format2Bytes(1, LL_%[1]s, format, v...)
 					err := GlobalLogger.Output(LL_%[1]s,s)
 					if err != nil {
 						fmt.Println(err)
@@ -174,14 +174,14 @@ var leveldata = map[LL_Type]string{
 
 		fmt.Fprintf(&buff, `
 				func (l LogBase) %[1]s(format string, v ...interface{}) {
-					s := l.Format2Bytes(2, LL_%[1]s, format, v...)
+					s := l.Format2Bytes(1, LL_%[1]s, format, v...)
 					err := l.Output(LL_%[1]s,s)
 					if err != nil {
 						fmt.Println(err)
 					}
 				}
 				func (l LogBase) NewErrorWith%[1]sLog(format string, v ...interface{}) error {
-					s := l.Format2Bytes(2, LL_%[1]s, format, v...)
+					s := l.Format2Bytes(1, LL_%[1]s, format, v...)
 					err := l.Output(LL_%[1]s,s)
 					if err != nil {
 						fmt.Println(err)
