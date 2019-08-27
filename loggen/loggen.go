@@ -21,8 +21,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/kasworld/goguelike2/tool/packageparser"
 )
 
 var (
@@ -121,7 +119,7 @@ func Build(packagename string, leveldata []string) (*bytes.Buffer, error) {
 
 	var buff bytes.Buffer
 
-	fmt.Fprintln(&buff, packageparser.MakeGenComment())
+	fmt.Fprintln(&buff, MakeGenComment())
 	fmt.Fprintf(&buff, `
 		package %[1]s
 		import "fmt"
