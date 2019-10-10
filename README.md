@@ -1,6 +1,8 @@
 # python like log library , log level function generation 
 
-loggen :  loglevel.data 를 사용해서 log package를 생성합니다. 
+build.sh : install genlog
+
+genlog :  loglevel.data 를 사용해서 log package를 생성합니다. 
 
 loglevel data에는 사용할 level을 적으면 됩니다. (basicloglevel.data 참고)
 
