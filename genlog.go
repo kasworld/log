@@ -48,23 +48,26 @@ func isDir(path string) error {
 	return nil
 }
 
-func LoadData(filename string) ([]string, error) {
+// loadEnumWithComment load list of enum + comment
+func loadEnumWithComment(filename string) ([][]string, error) {
 	fd, err := os.Open(filename)
 	if err != nil {
 		return nil, err
 	}
 	defer fd.Close()
-	rtn := make([]string, 0)
+	rtn := make([][]string, 0)
 	rd := bufio.NewReader(fd)
 	for {
 		line, err := rd.ReadString('\n')
-		name := strings.TrimSpace(line)
-		if len(name) == 0 {
-		} else {
-			rtn = append(rtn, name)
+		line = strings.TrimSpace(line)
+		if len(line) != 0 {
+			s2 := strings.SplitN(line, " ", 2)
+			if len(s2) == 1 {
+				s2 = append(s2, "")
+			}
+			rtn = append(rtn, s2)
 		}
-		if err != nil {
-			// fmt.Printf("%v\n", err)
+		if err != nil { // eof
 			break
 		}
 	}
@@ -95,16 +98,13 @@ func main() {
 		return
 	}
 
-	leveldata, err := LoadData(*leveldatafile)
+	leveldata, err := loadEnumWithComment(*leveldatafile)
 	if err != nil {
 		fmt.Printf("%v", err)
 		return
 	}
 
-	buf, err := Build(
-		*packagename,
-		leveldata,
-	)
+	buf, err := Build(*packagename, leveldata)
 	if err != nil {
 		fmt.Printf("%v", err)
 		return
@@ -115,7 +115,7 @@ func main() {
 	}
 }
 
-func Build(packagename string, leveldata []string) (*bytes.Buffer, error) {
+func Build(packagename string, leveldata [][]string) (*bytes.Buffer, error) {
 
 	var buff bytes.Buffer
 
@@ -129,9 +129,9 @@ func Build(packagename string, leveldata []string) (*bytes.Buffer, error) {
 	fmt.Fprintf(&buff, "const (\n")
 	for i, lvname := range leveldata {
 		if i == 0 {
-			fmt.Fprintf(&buff, "LL_%v LL_Type = 1 << iota\n", lvname)
+			fmt.Fprintf(&buff, "LL_%v LL_Type = 1 << iota // %v\n", lvname[0], lvname[1])
 		} else {
-			fmt.Fprintf(&buff, "LL_%v\n", lvname)
+			fmt.Fprintf(&buff, "LL_%v // %v\n", lvname[0], lvname[1])
 		}
 	}
 	fmt.Fprintf(&buff, `
@@ -142,7 +142,7 @@ var leveldata = map[LL_Type]string{
 	`)
 
 	for i, lvname := range leveldata {
-		fmt.Fprintf(&buff, "%v : \"%v\", \n", 1<<uint(i), lvname)
+		fmt.Fprintf(&buff, "%v : \"%v\", \n", 1<<uint(i), lvname[0])
 	}
 	fmt.Fprintf(&buff, `
 	%v : "%v",
@@ -167,7 +167,7 @@ var leveldata = map[LL_Type]string{
 					}
 					return fmt.Errorf(format, v...)
 				}
-				`, lvname,
+				`, lvname[0],
 		)
 
 		fmt.Fprintf(&buff, `
@@ -186,7 +186,7 @@ var leveldata = map[LL_Type]string{
 					}
 					return fmt.Errorf(format, v...)
 				}
-				`, lvname,
+				`, lvname[0],
 		)
 
 	}
