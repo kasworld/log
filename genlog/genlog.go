@@ -174,7 +174,7 @@ var leveldata = map[LL_Type]string{
 		)
 
 		fmt.Fprintf(&buff, `
-				func (l LogBase) %[1]s(format string, v ...interface{}) {
+				func (l *LogBase) %[1]s(format string, v ...interface{}) {
 					if !l.IsLevel(LL_%[1]s) {
 						return
 					}
@@ -184,7 +184,7 @@ var leveldata = map[LL_Type]string{
 						fmt.Println(err)
 					}
 				}
-				func (l LogBase) NewErrorWith%[1]sLog(format string, v ...interface{}) error {
+				func (l *LogBase) NewErrorWith%[1]sLog(format string, v ...interface{}) error {
 					s := l.Format2Bytes(1, LL_%[1]s, format, v...)
 					err := l.Output(LL_%[1]s,s)
 					if err != nil {

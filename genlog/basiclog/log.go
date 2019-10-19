@@ -323,7 +323,7 @@ func (lg *LogBase) SetFlags(flag logflagi.LogFlagI) {
 	lg.flag = flag
 }
 
-func (lg LogBase) String() string {
+func (lg *LogBase) String() string {
 	return fmt.Sprintf("LogBase[%v %v]",
 		lg.FlagString(), lg.LevelString(),
 	)
