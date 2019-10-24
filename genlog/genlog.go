@@ -137,8 +137,11 @@ func Build(packagename string, leveldata [][]string) (*bytes.Buffer, error) {
 	fmt.Fprintf(&buff, `
 	LL_END
 	LL_All = LL_END - 1
-)
-var leveldata = map[LL_Type]string{
+	LL_Count = %v
+	)`, len(leveldata))
+
+	fmt.Fprintf(&buff, `
+	var leveldata = map[LL_Type]string{
 	`)
 
 	for i, lvname := range leveldata {

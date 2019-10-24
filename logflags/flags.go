@@ -77,7 +77,7 @@ func (lf LF_Type) BitClear(lf2 logflagi.LogFlagI) logflagi.LogFlagI {
 }
 
 func (lf LF_Type) BitTest(lf2 logflagi.LogFlagI) bool {
-	return lf&lf2.(LF_Type) == 0
+	return lf&lf2.(LF_Type) != 0
 }
 
 func (lf LF_Type) FlagString() string {
