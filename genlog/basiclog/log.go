@@ -49,15 +49,55 @@ func (ll LL_Type) LevelsString() string {
 	return buff.String()
 }
 
-func (ll LL_Type) IsLevel(level LL_Type) bool {
-	return ll&level != 0
-}
-
 func (i LL_Type) String() string {
 	if str, ok := leveldata[i]; ok {
 		return str
 	}
 	return "LL_Type(" + strconv.FormatInt(int64(i), 10) + ")"
+}
+
+func (ll LL_Type) IsLevel(level LL_Type) bool {
+	return ll&level != 0
+}
+
+func (ll LL_Type) AllLevel() LL_Type {
+	return LL_All
+}
+
+func (ll LL_Type) StartLevel() LL_Type {
+	return LL_Fatal
+}
+
+func (ll LL_Type) IsLastLevel() bool {
+	return ll == LL_END
+}
+
+func (ll LL_Type) NextLevel(n uint) LL_Type {
+	return ll << n
+}
+
+func (ll LL_Type) PreLevel(n uint) LL_Type {
+	return ll >> n
+}
+
+func (ll LL_Type) BitAnd(l2 LL_Type) LL_Type {
+	return ll & l2
+}
+
+func (ll LL_Type) BitOr(l2 LL_Type) LL_Type {
+	return ll | l2
+}
+
+func (ll LL_Type) BitXor(l2 LL_Type) LL_Type {
+	return ll ^ l2
+}
+
+func (ll LL_Type) BitClear(l2 LL_Type) LL_Type {
+	return ll &^ l2
+}
+
+func (ll LL_Type) BitTest(l2 LL_Type) bool {
+	return ll&l2 == 0
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -122,8 +162,8 @@ func NewWithDstDir(prefix string, logdir string, lf logflagi.LogFlagI,
 		return nil, err
 	}
 	newlg.AddDestination(LL_All^splitLogLevel, newDestForOther)
-	for ll := LL_Type(1); ll < LL_END; ll <<= 1 {
-		if splitLogLevel&ll == ll {
+	for ll := LL_Type(1); !ll.IsLastLevel(); ll = ll.NextLevel(1) {
+		if splitLogLevel.IsLevel(ll) {
 			newDestForLL, serr := logdestination_file.New(
 				makeLogFilename(logdir, ll.String()))
 			if serr != nil {
@@ -141,13 +181,12 @@ func (lg *LogBase) AddDestination(
 
 	lg.mutex.Lock()
 	defer lg.mutex.Unlock()
-
-	for i := 0; i < len(lg.ltype2destgrp); i++ {
-		s := LL_Type(1 << uint(i))
-		if ll&s == 0 {
-			continue
+	i := 0
+	for l2 := LL_Type(1); !l2.IsLastLevel(); l2 = l2.NextLevel(1) {
+		if ll.IsLevel(l2) {
+			lg.addDestination1DestGrp(i, o)
 		}
-		lg.addDestination1DestGrp(i, o)
+		i++
 	}
 }
 
@@ -159,8 +198,7 @@ func (lg *LogBase) addDestination1DestGrp(
 		if _, ok := lg.allDestInfoByName[o.Name()]; !ok {
 			panic(fmt.Sprintf(
 				"%v failed to AddDestination to destgroup index:%v, abnormal state",
-				lg,
-				i))
+				lg, i))
 		}
 		fmt.Printf("%v not added to destgroup index:%v\n", o, i)
 		return
@@ -181,13 +219,12 @@ func (lg *LogBase) DelDestination(
 
 	lg.mutex.Lock()
 	defer lg.mutex.Unlock()
-
-	for i := 0; i < len(lg.ltype2destgrp); i++ {
-		s := LL_Type(1 << uint(i))
-		if ll&s == 0 {
-			continue
+	i := 0
+	for l2 := LL_Type(1); !l2.IsLastLevel(); l2 = l2.NextLevel(1) {
+		if ll.IsLevel(l2) {
+			lg.delDestinationFrom1DestGrp(i, o)
 		}
-		lg.delDestinationFrom1DestGrp(i, o)
+		i++
 	}
 }
 
@@ -208,9 +245,7 @@ func (lg *LogBase) delDestinationFrom1DestGrp(
 	} else {
 		panic(fmt.Sprintf(
 			"%v failed to DelDestination %v from destgroup index:%v, abnormal state",
-			lg,
-			o,
-			i,
+			lg, o, i,
 		))
 	}
 }
@@ -268,7 +303,7 @@ func (lg *LogBase) Panic(format string, v ...interface{}) error {
 func (lg *LogBase) AddLevel(level LL_Type) {
 	lg.mutex.Lock()
 	defer lg.mutex.Unlock()
-	lg.loglevel |= level
+	lg.loglevel = lg.loglevel.BitOr(level)
 }
 
 func (lg *LogBase) SetLevel(level LL_Type) {
@@ -280,11 +315,11 @@ func (lg *LogBase) SetLevel(level LL_Type) {
 func (lg *LogBase) DelLevel(level LL_Type) {
 	lg.mutex.Lock()
 	defer lg.mutex.Unlock()
-	lg.loglevel &= ^level
+	lg.loglevel = lg.loglevel.BitClear(level)
 }
 
 func (lg *LogBase) IsLevel(level LL_Type) bool {
-	return lg.loglevel&level != 0
+	return lg.loglevel.IsLevel(level)
 }
 
 func (lg *LogBase) FlagString() string {
