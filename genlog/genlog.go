@@ -156,7 +156,7 @@ func Build(packagename string, leveldata [][]string) (*bytes.Buffer, error) {
 
 		fmt.Fprintf(&buff, `
 				func %[1]s(format string, v ...interface{}) {
-					if !GlobalLogger.IsLevel(LL_%[1]s) {
+					if !GlobalLogger.GetLevel().IsLevel(LL_%[1]s) {
 						return
 					}
 					s := GlobalLogger.Format2Bytes(1, LL_%[1]s, format, v...)
@@ -170,7 +170,7 @@ func Build(packagename string, leveldata [][]string) (*bytes.Buffer, error) {
 
 		fmt.Fprintf(&buff, `
 				func (l *LogBase) %[1]s(format string, v ...interface{}) {
-					if !l.IsLevel(LL_%[1]s) {
+					if !l.GetLevel().IsLevel(LL_%[1]s) {
 						return
 					}
 					s := l.Format2Bytes(1, LL_%[1]s, format, v...)
