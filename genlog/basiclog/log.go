@@ -100,43 +100,38 @@ func New(prefix string, lf logflagi.LogFlagI, lv LL_Type) *LogBase {
 	}
 }
 
+func makeLogFilename(logdir string, ll string) string {
+	basename := filepath.Base(logdir)
+	filename := fmt.Sprintf("%s.%s.%s", basename, ll, "log")
+	return filepath.Join(logdir, filename)
+}
+
 func NewWithDstDir(prefix string, logdir string, lf logflagi.LogFlagI,
 	loglevel LL_Type, splitLogLevel LL_Type) (*LogBase, error) {
 	logdir = strings.TrimSpace(logdir)
 	if logdir == "" {
-		return nil, fmt.Errorf("logdir empty %v", logdir)
+		return nil, fmt.Errorf("logdir empty")
 	}
-	if fileinfo, err := os.Stat(logdir); err != nil { // PathError
-		if mkerr := os.Mkdir(logdir, os.ModePerm); mkerr != nil {
-			return nil, mkerr
-		}
-	} else if fileinfo.IsDir() == false {
-		return nil, fmt.Errorf("not a directory %v", logdir)
+	if err := os.MkdirAll(logdir, os.ModePerm); err != nil {
+		return nil, err
 	}
-
-	basename := filepath.Base(logdir)
 	newlg := New(prefix, lf, loglevel)
-
-	fnameForOther := fmt.Sprintf("%s.%s.%s", basename, "Other", "log")
-	fpathForOther := filepath.Join(logdir, fnameForOther)
-	newDestForOther, err := logdestination_file.New(fpathForOther)
+	newDestForOther, err := logdestination_file.New(
+		makeLogFilename(logdir, "Other"))
 	if err != nil {
 		return nil, err
 	}
 	newlg.AddDestination(LL_All^splitLogLevel, newDestForOther)
-
 	for ll := LL_Type(1); ll < LL_END; ll <<= 1 {
 		if splitLogLevel&ll == ll {
-			fnameForLL := fmt.Sprintf("%s.%s.%s", basename, ll.String(), "log")
-			fpathForLL := filepath.Join(logdir, fnameForLL)
-			newDestForLL, serr := logdestination_file.New(fpathForLL)
+			newDestForLL, serr := logdestination_file.New(
+				makeLogFilename(logdir, ll.String()))
 			if serr != nil {
 				return nil, serr
 			}
 			newlg.AddDestination(ll, newDestForLL)
 		}
 	}
-	newlg.AddDestination(LL_Fatal, OutputStdout)
 	newlg.AddDestination(LL_Fatal, OutputStderr)
 	return newlg, nil
 }
