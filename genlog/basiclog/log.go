@@ -37,7 +37,7 @@ func NewWithDstDir(prefix string, logdir string, lf logflagi.LogFlagI,
 		return nil, err
 	}
 	newlg.AddDestination(LL_All^splitLogLevel, newDestForOther)
-	for ll := LL_Type(1); !ll.IsLastLevel(); ll = ll.NextLevel(1) {
+	for ll := loglevel.StartLevel(); !ll.IsLastLevel(); ll = ll.NextLevel(1) {
 		if splitLogLevel.IsLevel(ll) {
 			newDestForLL, serr := logdestination_file.New(
 				makeLogFilename(logdir, ll.String()))

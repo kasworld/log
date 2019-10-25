@@ -38,14 +38,8 @@ func (ll LL_Type) String() string {
 func (ll LL_Type) IsLevel(l2 LL_Type) bool {
 	return ll&l2 != 0
 }
-func (ll LL_Type) AllLevel() LL_Type {
-	return LL_All
-}
 func (ll LL_Type) StartLevel() LL_Type {
 	return LL_Fatal
-}
-func (ll LL_Type) LevelCount() int {
-	return LL_Count
 }
 func (ll LL_Type) IsLastLevel() bool {
 	return ll == LL_END
@@ -122,8 +116,8 @@ type LogBase struct {
 
 func New(prefix string, lf logflagi.LogFlagI, lv LL_Type) *LogBase {
 
-	dstgrp := make([]*logdestinationgroup.LogDestinationGroup, lv.LevelCount())
-	for i := 0; i < lv.LevelCount(); i++ {
+	dstgrp := make([]*logdestinationgroup.LogDestinationGroup, LL_Count)
+	for i := 0; i < LL_Count; i++ {
 		dstgrp[i] = logdestinationgroup.New()
 	}
 
@@ -146,7 +140,7 @@ func (lg *LogBase) AddDestination(
 
 	lg.mutex.Lock()
 	defer lg.mutex.Unlock()
-	for i := 0; i < ll.LevelCount(); i++ {
+	for i := 0; i < LL_Count; i++ {
 		if ll.TestAt(i) {
 			lg.addDestination1DestGrp(i, o)
 		}
@@ -182,7 +176,7 @@ func (lg *LogBase) DelDestination(
 
 	lg.mutex.Lock()
 	defer lg.mutex.Unlock()
-	for i := 0; i < ll.LevelCount(); i++ {
+	for i := 0; i < LL_Count; i++ {
 		if ll.TestAt(i) {
 			lg.delDestinationFrom1DestGrp(i, o)
 		}
@@ -249,7 +243,7 @@ func (lg *LogBase) Format2Bytes(calldepth int, ll LL_Type,
 
 func (lg *LogBase) Output(ll LL_Type, b []byte) error {
 	var err error
-	for i := 0; i < ll.LevelCount(); i++ {
+	for i := 0; i < LL_Count; i++ {
 		if ll.TestAt(i) {
 			if lerr := lg.ltype2destgrp[i].Write(b); lerr != nil {
 				err = lerr
