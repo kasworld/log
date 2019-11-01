@@ -26,7 +26,7 @@ loglevel data에는 사용할 level을 적으면 됩니다. (basicloglevel.data 
 genlog : 커스텀 로그 생성기 
 
     입력 받은 로그 레벨 데이터 를 사용해서 로그 생성기를 만든다. 
-    예제에 basiclevel.data 를 사용하여 만들어지 basiclog 가 있다. 
+    예제에 basiclevel.data 를 사용하여 만들어진 basiclog 가 있다. 
     생성한 파일이름은 _gen.go로 끝난다. 
 
 logdestination_file : 생성된 로그의 목적지가 file 인 경우 사용 
